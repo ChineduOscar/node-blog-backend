@@ -3,9 +3,16 @@ const { StatusCodes } = require('http-status-codes');
 const { BadRequestError, NotFoundError } = require('../errors');
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
+const slugify = require('slugify');
 
-// Get all posts (Admin can see all posts, normal users only see their own)
+// Get All posts (Admin can see all posts, normal users only see their own)
 const getAllPosts = async (req, res) => {
+  const posts = await Post.find({}).sort('createdAt');
+  res.status(StatusCodes.OK).json({ posts, count: posts.length });
+};
+
+// Get writer's posts (Admin can see all posts, normal users only see their own)
+const getWriterPosts = async (req, res) => {
   let posts;
   if (req.user.role === 'admin') {
     // Admin can see all posts
@@ -20,17 +27,32 @@ const getAllPosts = async (req, res) => {
 // Get a single post by ID (Admin can access any post, user can access only their own)
 const getPost = async (req, res) => {
   const {
-    user: { userId, role },
     params: { id: postId },
   } = req;
 
   const post = await Post.findOne({
     _id: postId,
-    ...(role !== 'admin' && { writer: userId }), // Admin can access any post, others can access only their own
   });
 
   if (!post) {
     throw new NotFoundError(`No post with id ${postId}`);
+  }
+
+  res.status(StatusCodes.OK).json({ post });
+};
+
+// Get a single post by slug (Admin can access any post, user can access only their own)
+const getPostBySlug = async (req, res) => {
+  const {
+    params: { slug },
+  } = req;
+
+  const post = await Post.findOne({
+    slug: slug,
+  });
+
+  if (!post) {
+    throw new NotFoundError(`No post with slug ${slug}`);
   }
 
   res.status(StatusCodes.OK).json({ post });
@@ -43,6 +65,9 @@ const createPost = async (req, res) => {
   if (!title || !content || !req.files || !req.files.image) {
     throw new BadRequestError('Title, Content, and Image are required');
   }
+
+  // Generate slug from title
+  req.body.slug = slugify(title, { lower: true });
 
   // Upload the image to Cloudinary
   const uploadResult = await cloudinary.uploader.upload(req.files.image.tempFilePath, {
@@ -60,6 +85,7 @@ const createPost = async (req, res) => {
 
   res.status(StatusCodes.CREATED).json({ post });
 };
+
 
 // Update an existing post
 const updatePost = async (req, res) => {
@@ -106,11 +132,12 @@ const deletePost = async (req, res) => {
     user: { userId, role },
     params: { id: postId },
   } = req;
-  
+  console.log('User Role:', role);
   const post = await Post.findOne({
     _id: postId,
     ...(role !== 'admin' && { writer: userId }), // Admin can delete any post, others can delete only their own
   });
+  console.log('Found post:', post);
 
   if (!post) {
     throw new NotFoundError(`No post with id ${postId}`);
@@ -125,6 +152,8 @@ module.exports = {
   createPost,
   deletePost,
   getAllPosts,
+  getWriterPosts,
   updatePost,
   getPost,
+  getPostBySlug
 };

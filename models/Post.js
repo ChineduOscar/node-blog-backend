@@ -14,6 +14,11 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide a title'],
     },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     writer: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
@@ -40,3 +45,10 @@ const PostSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model('Post', PostSchema);
+
+PostSchema.pre('save', function (next) {
+  if (!this.slug) {
+    this.slug = slugify(this.title, { lower: true });
+  }
+  next();
+});

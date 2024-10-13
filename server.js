@@ -20,7 +20,6 @@ cloudinary.config({
 });
 // database
 const connectDB = require('./db/connect');
-const authenticateUser = require('./middleware/authentication')
 // routers
 const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
@@ -43,7 +42,7 @@ app.use(fileUpload({ useTempFiles: true }));
 
 // routes
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/posts', authenticateUser, postRouter);
+app.use('/api/v1/posts', postRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
@@ -52,7 +51,7 @@ app.get('/', (req, res) => {
   res.send('<h1>Post API</h1>');
 });
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 
 const start = async () => {
   try {
