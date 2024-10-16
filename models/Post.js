@@ -19,10 +19,12 @@ const PostSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    writer: {
+    writerId: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
-      required: [true, 'Please provide the writer'],
+    },
+    writerName: {
+      type: String,
     },
     date: {
       type: Date,

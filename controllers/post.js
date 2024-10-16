@@ -75,13 +75,14 @@ const createPost = async (req, res) => {
     folder: 'file-upload',
   });
 
-  req.body.writer = req.user.userId;
+  req.body.writerId = req.user.userId; 
+  req.body.writerName = req.user.name; 
   req.body.image = uploadResult.secure_url;
 
   const post = await Post.create(req.body);
   
-  // Optionally, clean up the local file
-  fs.unlinkSync(req.files.image.tempFilePath); // Delete the temporary file after upload
+  // Clean up the local file
+  fs.unlinkSync(req.files.image.tempFilePath); 
 
   res.status(StatusCodes.CREATED).json({ post });
 };
@@ -132,12 +133,10 @@ const deletePost = async (req, res) => {
     user: { userId, role },
     params: { id: postId },
   } = req;
-  console.log('User Role:', role);
   const post = await Post.findOne({
     _id: postId,
     ...(role !== 'admin' && { writer: userId }), // Admin can delete any post, others can delete only their own
   });
-  console.log('Found post:', post);
 
   if (!post) {
     throw new NotFoundError(`No post with id ${postId}`);
