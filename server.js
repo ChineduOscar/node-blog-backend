@@ -49,7 +49,7 @@ app.use(fileUpload({ useTempFiles: true }));
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/posts', postRouter);
 app.use('/', swaggerUI.serve, swaggerUI.setup(swaggerDocument, {
-  customSiteTitle: 'Alimego API Documentation', 
+  customSiteTitle: 'Techvan API Documentation', 
 }));
 
 app.use(notFoundMiddleware);

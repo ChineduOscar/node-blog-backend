@@ -1,7 +1,7 @@
 {
-  "name": "Blog-backend",
+  "name": "techvan-backend",
   "version": "1.0.0",
-  "description": "Alimego backend APIs",
+  "description": "Techvan backend APIs",
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js"
