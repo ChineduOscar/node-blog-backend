@@ -5,7 +5,7 @@ info:
   contact: {}
   version: '1.0'
 servers:
-  - url: http://localhost:5000/api/v1
+  - url: http://localhost:5001/api/v1
     variables: {}
 paths:
   /auth/register:
@@ -66,12 +66,37 @@ paths:
       requestBody:
         description: ''
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/CreatePostRequest'
-            example:
-              company: google
-              position: front-end developer
+              type: object
+              required:
+                - category
+                - title
+                - image
+                - content
+              properties:
+                featured:
+                  type: boolean
+                category:
+                  type: string
+                  enum:
+                    - Artificial Intelligence
+                    - Blockchain
+                    - Cybersecurity
+                    - Events
+                    - Hardware
+                    - Jobs
+                    - Software
+                    - Startups
+                title:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+                imgSource:
+                  type: string
+                content:
+                  type: string
         required: true
       responses:
         '200':
@@ -83,6 +108,30 @@ paths:
         - Posts
       summary: Get All Posts
       operationId: GetAllPosts
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /posts/writer:
+    get:
+      tags:
+        - Posts
+      summary: Get Writer's Posts
+      operationId: GetWriterPosts
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /posts/post/{slug}:
+    get:
+      tags:
+        - Posts
+      summary: Get Post By Slug
+      operationId: GetPostBySlug
       parameters: []
       responses:
         '200':
@@ -118,12 +167,37 @@ paths:
       requestBody:
         description: ''
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UpdatePostRequest'
-            example:
-              company: random
-              position: intern
+              type: object
+              required:
+                - category
+                - title
+                - image
+                - content
+              properties:
+                featured:
+                  type: boolean
+                category:
+                  type: string
+                  enum:
+                    - Artificial Intelligence
+                    - Blockchain
+                    - Cybersecurity
+                    - Events
+                    - Hardware
+                    - Jobs
+                    - Software
+                    - Startups
+                title:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+                imgSource:
+                  type: string
+                content:
+                  type: string
         required: true
       responses:
         '200':
@@ -175,34 +249,6 @@ components:
       example:
         email: susan@gmail.com
         password: secret
-    CreatePostRequest:
-      title: CreatePostRequest
-      required:
-        - company
-        - position
-      type: object
-      properties:
-        company:
-          type: string
-        position:
-          type: string
-      example:
-        company: google
-        position: front-end developer
-    UpdatePostRequest:
-      title: UpdatePostRequest
-      required:
-        - company
-        - position
-      type: object
-      properties:
-        company:
-          type: string
-        position:
-          type: string
-      example:
-        company: random
-        position: intern
   securitySchemes:
     httpBearer:
       type: http

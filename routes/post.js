@@ -14,7 +14,7 @@ const {
 
 // Define routes for posts
 router.route('/').get(getAllPosts)  // Get all posts
-router.route('/writer').get(getWriterPosts) // Get post by a writer
+router.route('/writer').get(authenticateUser, getWriterPosts) // Get posts by a writer
 router.route('/').post(authenticateUser, createPost) // Create post
 router.route('/:id').get(getPost).delete(authenticateUser, deletePost).patch(authenticateUser, updatePost); // Get, update, and delete a post by ID
 router.route('/post/:slug').get(getPostBySlug); 

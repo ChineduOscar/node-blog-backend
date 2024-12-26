@@ -45,18 +45,17 @@ app.use(cors());
 app.use(xss());
 app.use(fileUpload({ useTempFiles: true }));
 
-app.get('/', (req, res) => {
-  res.send('<h1>Blog Posts API</h1><a href="/api-docs">Documentation</a>');
-});
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 // routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/posts', postRouter);
+app.use('/', swaggerUI.serve, swaggerUI.setup(swaggerDocument, {
+  customSiteTitle: 'Alimego API Documentation', 
+}));
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 
 const start = async () => {
   try {

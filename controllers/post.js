@@ -11,7 +11,7 @@ const getAllPosts = async (req, res) => {
   res.status(StatusCodes.OK).json({ posts, count: posts.length });
 };
 
-// Get writer's posts (Admin can see all posts, normal users only see their own)
+// Get writer's posts (Admin can see all posts, normal writer's only see their own)
 const getWriterPosts = async (req, res) => {
   let posts;
   if (req.user.role === 'admin') {
@@ -19,12 +19,12 @@ const getWriterPosts = async (req, res) => {
     posts = await Post.find({}).sort('createdAt');
   } else {
     // Regular user can only see their own posts
-    posts = await Post.find({ writer: req.user.userId }).sort('createdAt');
+    posts = await Post.find({ writerId: req.user.userId }).sort('createdAt');
   }
   res.status(StatusCodes.OK).json({ posts, count: posts.length });
 };
 
-// Get a single post by ID (Admin can access any post, user can access only their own)
+// Get a single post by ID (Admin can access any post, writer's can access only their own)
 const getPost = async (req, res) => {
   const {
     params: { id: postId },
@@ -99,14 +99,18 @@ const updatePost = async (req, res) => {
   if (!title || !content) {
     throw new BadRequestError('Title or Content fields cannot be empty');
   }
-
   const post = await Post.findOne({
     _id: postId,
-    ...(role !== 'admin' && { writer: userId }), // Admin can update any post, others can only update their own
+    ...(role !== 'admin' && { writerId: userId }),  // Admin can update any post, others can only update their own
   });
 
   if (!post) {
-    throw new NotFoundError(`No post with id ${postId}`);
+    throw new NotFoundError(`No post with ids ${postId}`);
+  }
+
+   // If the title is updated, regenerate the slug
+   if (title !== post.title) {
+    req.body.slug = slugify(title, { lower: true });
   }
 
   // If a new image is uploaded, upload it to Cloudinary
@@ -135,7 +139,7 @@ const deletePost = async (req, res) => {
   } = req;
   const post = await Post.findOne({
     _id: postId,
-    ...(role !== 'admin' && { writer: userId }), // Admin can delete any post, others can delete only their own
+    ...(role !== 'admin' && { writerId: userId }), // Admin can delete any post, others can delete only their own
   });
 
   if (!post) {
