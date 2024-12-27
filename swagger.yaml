@@ -5,7 +5,7 @@ info:
   contact: {}
   version: '1.0'
 servers:
-  - url: https://techvanapi.onrender.com
+  - url: https://techvanapi.onrender.com/api/v1
     variables: {}
 paths:
   /auth/register:
