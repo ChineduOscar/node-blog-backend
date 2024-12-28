@@ -215,6 +215,43 @@ paths:
           description: ''
           headers: {}
       deprecated: false
+  /contact:
+    post:
+      tags:
+        - Contact
+      summary: Create contact
+      operationId: CreateContact
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - message
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  format: email
+                  example: john.doe@example.com
+                phone:
+                  type: string
+                  example: "+1234567890"
+                message:
+                  type: string
+                  example: "I have a question about your services."
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
 components:
   schemas:
     RegisterUserRequest:
@@ -249,6 +286,28 @@ components:
       example:
         email: susan@gmail.com
         password: secret
+    CreateContactRequest:
+      title: CreateContactRequest
+      required:
+        - name
+        - email
+        - phone
+        - message
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        message:
+          type: string
+      example:
+        name: Johndoe
+        email: Johndoe@gmail.com
+        phone: "+1234567890" 
+        message: I have a question about your services.   
   securitySchemes:
     httpBearer:
       type: http

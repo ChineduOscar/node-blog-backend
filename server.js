@@ -28,6 +28,7 @@ const connectDB = require('./db/connect');
 // routers
 const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
+const contactRouter = require('./routes/contact');
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
@@ -48,6 +49,7 @@ app.use(fileUpload({ useTempFiles: true }));
 // routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/posts', postRouter);
+app.use('/api/v1/contact', contactRouter);
 app.use('/', swaggerUI.serve, swaggerUI.setup(swaggerDocument, {
   customSiteTitle: 'Techvan API Documentation', 
 }));
