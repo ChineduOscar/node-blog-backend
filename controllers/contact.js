@@ -14,7 +14,7 @@ const createContact = async (req, res) => {
   await Contact.create({ name, email, phone, message });
 
   res.status(StatusCodes.CREATED).json({
-    message: 'Contact submitted successfully',
+    message: 'Submitted successfully',
   });
 };
 
